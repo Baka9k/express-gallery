@@ -10,6 +10,9 @@ var expressHandlebars  = require('express-handlebars');
 var app = express();
 var upload = multer({ dest: 'uploads/' });
 
+app.engine('handlebars', expressHandlebars({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
+
 app.use(cookieParser());
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -92,7 +95,7 @@ var getTimeString = function() {
 //Files
 
 var getFileList = function(path, callback) {
-    fs.readdir(path, function(err, files) {callback(err, files)});
+    fs.readdir(path, function(err, files) {callback(err, files);});
 }
 
 var deleteFile = function(path) {
@@ -106,7 +109,7 @@ var getImages = function(callback) {
 	getFileList("uploads", function(err, paths) {
 		if (err) console.log("Error while getting file list: " + err);
 		else {
-			callback('thumbnail', {
+			callback('thumbnails', {
 				paths: paths  
 			});
 		}
@@ -119,7 +122,7 @@ var getImages = function(callback) {
 
 
 app.get('/', simpleAuth, function(req, res) {
-    readImages(function(template, content) {
+    getImages(function(template, content) {
 	    res.render(template, content);
 	});
 });
