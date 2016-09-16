@@ -48,7 +48,7 @@ var checkLoginPass = function(login, password) {
 var simpleAuth = function(req, res, next) {
     if (checkSession(req.cookies.SID)) next();
     else {
-        res.status("403").send("<h3>You are not authorized</h3><br /><button onclick='window.location=\"/login\"'>Go to login page</button><script>setTimeout(function(){window.location=\"/login\"}, 5000)</script>");
+        res.status("403").render("notauthorized", {});
     }
 };
 
@@ -149,7 +149,7 @@ app.post('/login', function (req, res) {
 		res.cookie('SID', key);
 		res.redirect('/');
 	} else {
-		res.render("notauthorized", {});
+		res.render("wrongpassword", {});
 	}
 });
 
