@@ -1,41 +1,87 @@
 var express = require('express');
 var path = require('path');
 var fs = require('fs');
-var cookieParser = require('cookie-parser')
 var bodyParser = require('body-parser');
 var multer = require('multer'); // v1.0.5
 var crypto = require('crypto');
 var expressHandlebars  = require('express-handlebars');
+var passport = require('passport');
+var Strategy = require('passport-local').Strategy;
+var expressSession = require('express-session');
+
+
+
+var users = [
+    {
+        name: "qwerty",
+        hash: "wvxsat+LoPV1o19I31LAloo9zTxXfCdp3C8QNZQ7l14=",
+        id: "2"
+    },
+    {
+        name: "admin",
+        hash: "K7eZhJaJms3YE3+tOkT6+WqEoD1/IwzkLpfNF8euQp4=",
+        id: "1"
+    }
+];
+
+users.find = function(field, value) {
+    for (var i = 0; i < this.length; i++) {
+        if (!(typeof this[i] == "object")) continue;
+        if (this[i][field] === value) return this[i];
+    }
+    return false;
+}
+
+
+passport.use(new Strategy({
+		usernameField: 'login',
+		passwordField: 'password'
+	},
+	function(username, password, cb) {
+		var user = users.find("name", username);
+		if (user) {
+			if (user.hash == getHash(password)) {
+				return cb(null, user);
+			}
+		}
+		return cb(null, false);
+	})
+);
+
+passport.serializeUser(function(user, cb) {
+    cb(null, user.id);
+});
+
+passport.deserializeUser(function(id, cb) {
+    cb(null, users.find("id", id));
+});
+
+
 
 var app = express();
 var upload = multer({ dest: 'uploads/' });
-
 app.engine('handlebars', expressHandlebars({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
-app.use(cookieParser());
+app.use("/", express.static(__dirname + "/build"));
+app.use("/uploads", express.static(__dirname + "/uploads"));
+
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(expressSession({
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}));
 
-app.use(express.static(__dirname + '/'));
+app.use(passport.initialize());
+app.use(passport.session());
 
-
-
-
-var sessions = {
-    hdgrt5ei8dac: true
-};
-var users = {
-    qwerty: "wvxsat+LoPV1o19I31LAloo9zTxXfCdp3C8QNZQ7l14="
-};
 
 
 
 //Auth
-
-var checkSession = function(key) {
- if (sessions[key]) return sessions[key];
-}
 
 function getHash(str) {
     var hash = crypto.createHash('sha256');
@@ -44,28 +90,13 @@ function getHash(str) {
     return hash.digest('base64');
 }
 
-var checkLoginPass = function(login, password) {
-    if (users[login] === getHash(password)) return true;
-}
 
 var simpleAuth = function(req, res, next) {
-    if (checkSession(req.cookies.SID)) next();
+    if (req.user) next();
     else {
         res.status("403").render("notauthorized", {});
     }
 };
-
-function genExpDate() {
-    var d = new Date();
-    d.setFullYear(d.getFullYear()+1);
-    return d;
-}
-
-var createSession = function() {
-    var uuid = Math.floor(Math.random() * 1e10).toString() + Math.floor(Math.random() * 1e10).toString();
-    sessions[uuid] = true;
-    return uuid;
-}
 
 
 
@@ -102,15 +133,12 @@ var deleteFile = function(path) {
     fs.unlink(path);
 }
 
-
-
-
 var getImages = function(callback) {
 	getFileList("uploads", function(err, paths) {
 		if (err) console.log("Error while getting file list: " + err);
 		else {
 			callback('thumbnails', {
-				paths: paths  
+				paths: paths.map(x => "uploads/" + x) 
 			});
 		}
 	});
@@ -119,6 +147,21 @@ var getImages = function(callback) {
 
 
 //=======================================================================
+
+//Login
+
+app.get('/login', function(req, res) {
+	res.render("login", {});
+});
+
+app.post('/login', passport.authenticate('local', { failureRedirect: '/login' }), function(req, res) {
+	res.redirect('/');
+});
+
+app.get('/logout', simpleAuth, function(req, res) {
+	req.logout();
+	res.redirect('/');
+});
 
 
 app.get('/', simpleAuth, function(req, res) {
@@ -138,23 +181,6 @@ app.post('/postphoto', simpleAuth, upload.array('myfile', 1), function (req, res
 	res.redirect('/');
 })
 
-
-//Login
-
-app.get('/login', function(req, res) {
-	   res.render("login", {});
-});
-
-app.post('/login', function (req, res) {
-	// req.body will contain the text fields, if there were any
-	if (checkLoginPass(req.body.login, req.body.password)) {
-		var key = createSession();
-		res.cookie('SID', key);
-		res.redirect('/');
-	} else {
-		res.render("wrongpassword", {});
-	}
-});
 
 app.listen(3000, function () {
 	console.log('Gallery app listening on port 3000!');

@@ -1,27 +1,4 @@
-<div class="container vcentered">
-	<div class="col-xs-12 col-sm-7 col-md-5 col-lg-5 col-centered">
-		
-		<div class="notauthorized">
-			<div class="warning">
-				You are not authorized. 
-				<br />
-				You will be redirected to login page automatically.
-			</div>
-			<div class="centercontent">
-	  			<button class="btn btn-gotologin" onclick='gotoLoginPage();'>Go to login page</button>
-	  		</div>
-	  	</div>
-	
-	</div>
-</div>
-
-
-<script>
-	function gotoLoginPage() {
+<div class="container vcentered"><div class="col-xs-12 col-sm-7 col-md-5 col-lg-5 col-centered"><div class="notauthorized"><div class="warning">You are not authorized.<br>You will be redirected to login page automatically.</div><div class="centercontent"><button class="btn btn-gotologin" onclick="gotoLoginPage();">Go to login page</button></div></div></div></div><script>function gotoLoginPage() {
 		window.location="/login";
 	}
-	setTimeout(gotoLoginPage, 5000);
-</script>
-	
-	
-	
+	setTimeout(gotoLoginPage, 5000);</script>

@@ -1,0 +1,188 @@
+body {
+	font-family: 'Roboto', sans-serif;
+	color: rgba(0,0,0,0.65);
+	font-size: 16px;
+	background-color: #34495E;
+}
+
+
+.loginform input {
+	border-radius: 20px;
+	border: 0px;
+}
+.loginform .input-group-addon {
+	border-top-left-radius: 20px;
+	border-bottom-left-radius: 20px;
+	background-color: #4B77BE;
+	width: 90px;
+	color: #FFFFFF;
+	font-weight: 500;
+	border: 0px;
+}
+
+.form-horizontal {
+	text-align: center;
+}
+.remember {
+	margin-bottom: 20px;
+	color: #BDC3C7;
+}
+
+.thumbnail {
+    position:relative;
+    overflow:hidden;
+    padding-bottom:100%;
+}
+.thumbnail img{
+    position:absolute;
+}
+
+
+.wrongpassword, .notauthorized {
+	background-color: #ffffff;
+	padding: 30px;
+	border-radius: 30px;
+}
+
+.warning {
+	margin: 10px;
+	margin-top: 20px;
+	margin-bottom: 50px;
+	font-weight: 500;
+	text-align: center;
+}
+
+
+
+
+hr {
+	border-top: 1px solid #DDDDDD;
+	border-bottom: 1px solid #FFFFFF;
+}
+
+.hr2 {
+	border-top: 1px dashed #DDDDDD;
+	border-bottom: 1px dashed #FFFFFF;
+	margin-top: 8px;
+}
+
+
+.inline{
+	display: inline-block;
+}
+
+.col-centered {
+	float: none;
+	margin: 0 auto;
+}
+.vcentered {
+	min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+}
+
+
+
+.btn-login {
+	text-transform: uppercase;
+	cursor: pointer;
+	color: #FFFFFF;
+	width: 120px;
+	height: 40px;
+	font-weight: 500;
+	text-align: center;
+	margin: 4px;
+	background-color: #4B77BE;
+	border-radius: 30px;
+	border: 0px;
+}
+.btn-login i {
+	font-size: 28px;
+	margin-right: 10px;
+	vertical-align: middle;
+}
+.btn-login:hover {
+	color: #FFFFFF;
+	background-color: #4F7BC1;
+}
+.btn-login:active {
+	color: #FFFFFF;
+}
+.btn-login:focus {
+	color: #FFFFFF;
+}
+
+.btn-gotologin {
+	text-transform: uppercase;
+	cursor: pointer;
+	color: #FFFFFF;
+	width: 200px;
+	height: 40px;
+	font-weight: 500;
+	text-align: center;
+	margin: 4px;
+	background-color: #4B77BE;
+	border-radius: 30px;
+	border: 0px;
+}
+.btn-gotologin:hover {
+	color: #FFFFFF;
+	background-color: #4F7BC1;
+}
+.btn-gotologin:active {
+	color: #FFFFFF;
+}
+.btn-gotologin:focus {
+	color: #FFFFFF;
+}
+
+
+
+.material-icons {
+	vertical-align: bottom;
+	font-size: 26px;
+}
+
+
+h1 {
+	color: #676767;
+	font-weight: 500;
+}
+h2 {
+	font-size: 20px;
+	font-weight: 700;
+	margin-top: 10px;
+	margin-bottom: 18px;
+}
+
+.centered {
+    margin: 0 auto;
+}
+
+.centercontent {
+	text-align: center;
+}
+
+
+
+
+
+
+.dont-break-out {
+
+  /* These are technically the same, but use both */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  -ms-word-break: break-all;
+  /* Instead use this non-standard one: */
+  word-break: break-word;
+
+  /* Adds a hyphen where the word breaks, if supported (No Blink) */
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+
+}
