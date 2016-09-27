@@ -1,8 +1,8 @@
 <div class="container" id="all-images">
 	
 	
-	<div class="col-xs-6 col-sm-4 col-md-2 col-lg-1 thumbnail">
-		<img class="img-thumbnail" src="addimage.png" id="addImageModalTrigger">
+	<div class="col-xs-4 col-sm-3 col-md-2 col-lg-2 thumb">
+		<img class="img-thumbnail" src="images/addimage.png" id="addImageModalTrigger">
 	</div>
     
     <!-- Modal -->
@@ -29,8 +29,10 @@
 	{{#each paths}}
 
 
-	<div class="col-xs-6 col-sm-4 col-md-2 col-lg-1 thumbnail">
-		<img class="img-thumbnail" src="{{this}}">
+	<div class="col-xs-4 col-sm-3 col-md-2 col-lg-2 thumb">
+		<div class="square-thumbnail">
+			<img class="img" src="{{this}}">
+		</div>
 	</div>
 
 
