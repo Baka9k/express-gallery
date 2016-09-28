@@ -8,6 +8,7 @@ var expressHandlebars  = require('express-handlebars');
 var passport = require('passport');
 var Strategy = require('passport-local').Strategy;
 var expressSession = require('express-session');
+var thumb = require('node-thumbnail').thumb;
 
 
 
@@ -154,9 +155,11 @@ app.get('/login', function(req, res) {
 	res.render("login", {});
 });
 
+
 app.post('/login', passport.authenticate('local', { failureRedirect: '/login' }), function(req, res) {
 	res.redirect('/');
 });
+
 
 app.get('/logout', simpleAuth, function(req, res) {
 	req.logout();
@@ -170,15 +173,41 @@ app.get('/', simpleAuth, function(req, res) {
 	});
 });
 
+
 app.post('/postphoto', simpleAuth, upload.array('myfile', 1), function (req, res) {
+	
 	// req.files is array of files
 	for (var i = 0; i < req.files.length; i++) {
+		
 		if (!(req.files[i].mimetype.startsWith("image/"))) {
 			console.log(req.files[i].mimetype + " is not image and will be deleted");
 			deleteFile(req.files[i].path);
+			continue;
 		}
+		
+		var extension = req.files[i].originalname.match(/\.\w+$/);
+		
+		if (!extension) {
+			console.log(req.files[i].originalname + " has no extension and will be deleted");
+			deleteFile(req.files[i].path);
+		} else {
+			var pathWithExtension = req.files[i].path + extension[0];
+			fs.rename(req.files[i].path, pathWithExtension, function() {
+				thumb({
+						source: pathWithExtension, // could be a filename: dest/path/image.jpg 
+						destination: "thumbnails/",
+						suffix: '_thumb',
+						width: 250
+					}, function(err) {
+						if (err) console.log("Thumbnail generation error: file " + req.originalname);
+				});
+			});
+		}
+	
 	}
+	
 	res.redirect('/');
+	
 })
 
 
