@@ -29,6 +29,68 @@ body {
 }
 
 
+.cursorpointer {
+	cursor: pointer;
+}
+.nopadding {
+	padding: 0px;
+}
+
+
+.modal-content {
+	border-radius: 4px;
+	background-color: #34495E;
+	color: #ffffff;
+	
+}
+.modal-header {
+	background-color: #22313F;
+	border-bottom: 0px;
+	border-top-right-radius: 4px;
+	border-top-left-radius: 4px;
+}
+.modal-footer {
+	border-top: 0px;
+}
+.modal-content .close {
+	color: #ffffff;
+	opacity: 0.3;
+}
+.modal-content .close:hover {
+	opacity: 0.9;
+}
+
+.input-group {
+	
+}
+#form1 .input-group-addon, #form1 .form-control {
+	height: 48px;
+	color: #ffffff;
+	border: solid 1px #22313F;
+}
+#form1 .input-group-addon {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	background-color: #22313F;
+}
+#form1 .form-control {
+	padding-top: 12px;
+}
+.btn-upload {
+	margin: 0px;
+	height: 45px;
+	background-color: rgba(255, 255, 255, 0);
+}
+.btn-upload:hover, .btn-upload:focus, .btn-upload:active {
+	color: #ffffff;
+}
+.btn-close {
+	background-color: #22313F;
+}
+.btn-close:hover, .btn-close:focus, .btn-close:active {
+	color: #ffffff;
+}
+
 
 .bluenav {
 	background-color: #22313F;
@@ -70,9 +132,9 @@ body {
 	color: #ffffff;
 	background-color: rgba(255, 255, 255, 0.3);
 }
-.navbar-toggle:focus {
+.bluenav .navbar-toggle:focus, .navbar-toggle:active, .navbar-toggle:hover{
     color: #ffffff;
-	background-color: rgba(255, 255, 255, 0.3);
+	background-color: #22313F;
 }
 
 
