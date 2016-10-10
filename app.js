@@ -66,6 +66,7 @@ app.set('view engine', 'handlebars');
 
 app.use("/", express.static(__dirname + "/build"));
 app.use("/uploads", express.static(__dirname + "/uploads"));
+app.use("/thumbnails", express.static(__dirname + "/thumbnails"));
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -135,11 +136,11 @@ var deleteFile = function(path) {
 }
 
 var getImages = function(callback) {
-	getFileList("uploads", function(err, paths) {
+	getFileList("thumbnails", function(err, paths) {
 		if (err) console.log("Error while getting file list: " + err);
 		else {
 			callback('thumbnails', {
-				paths: paths.map(x => "uploads/" + x) 
+				paths: paths.map(x => "thumbnails/" + x) 
 			});
 		}
 	});
@@ -196,8 +197,8 @@ app.post('/postphoto', simpleAuth, upload.array('myfile', 1), function (req, res
 				thumb({
 						source: pathWithExtension, // could be a filename: dest/path/image.jpg 
 						destination: "thumbnails/",
-						suffix: '_thumb',
-						width: 250
+						suffix: '',
+						width: 350
 					}, function(err) {
 						if (err) console.log("Thumbnail generation error: file " + req.originalname);
 				});
