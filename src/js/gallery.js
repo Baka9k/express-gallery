@@ -1,4 +1,4 @@
-$( document ).ready(function() {
+$(window).load(function() {
 	
 	//Add listener on #addImageModalTrigger button which opens form in modal for adding new image
  	$("#addImageModalTrigger").on('click', function (e) {
