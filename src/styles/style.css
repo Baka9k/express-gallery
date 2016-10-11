@@ -184,6 +184,24 @@ body {
 }
 
 
+.bigmodal .modal-dialog {
+	width: 100%;
+	height: 100%;
+	margin: 0px;
+	padding: 10px;
+}
+.bigmodal .modal-content {
+	height: auto;
+	min-height: 100%;
+}
+
+.bigmodal .modal-body {
+	padding: 0px;
+}
+.bigmodal .modal-footer {
+	padding: 6px;
+}
+
 
 
 hr {
@@ -293,6 +311,10 @@ h2 {
 
 .centercontent {
 	text-align: center;
+}
+
+.black {
+	background-color: #000000;
 }
 
 
