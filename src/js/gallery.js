@@ -41,7 +41,7 @@ function renderImageInModal(imagePath) {
 	$("#imageViewerModal")
 		.find("img").attr("src", fullImagePath)
 		.css("max-height", $(window).height() - 120)
-		.css("min-height", $(window).height() - 120);
+		.parent().css("min-height", $(window).height() - 120);
 }
 
 
