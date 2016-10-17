@@ -65,7 +65,7 @@ body {
 }
 #form1 .input-group-addon, #form1 .form-control {
 	height: 48px;
-	color: #ffffff;
+	color: #aaa;
 	border: solid 1px #22313F;
 }
 #form1 .input-group-addon {
@@ -84,10 +84,10 @@ body {
 .btn-upload:hover, .btn-upload:focus, .btn-upload:active {
 	color: #ffffff;
 }
-.btn-close {
+.btn-footer {
 	background-color: #22313F;
 }
-.btn-close:hover, .btn-close:focus, .btn-close:active {
+.btn-footer:hover, .btn-footer:focus, .btn-footer:active {
 	color: #ffffff;
 }
 
