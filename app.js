@@ -9,6 +9,8 @@ var passport = require('passport');
 var Strategy = require('passport-local').Strategy;
 var expressSession = require('express-session');
 var thumb = require('node-thumbnail').thumb;
+var mongoose = require('mongoose');
+var md5File = require('md5-file');
 
 
 
@@ -102,29 +104,6 @@ var simpleAuth = function(req, res, next) {
 
 
 
-
-//Datetime
-
-var getDateString = function() {
-	var dateString = "";
-	var newDate = new Date();
-	dateString += (newDate.getMonth() + 1) + "/";
-	dateString += newDate.getDate() + "/";
-	dateString += newDate.getFullYear();
-	return dateString;
-};
-
-var getTimeString = function() {
-	var timeString = "";
-	var newDate = new Date();
-	timeString += newDate.getHours() + ":";
-	timeString += newDate.getMinutes() + ":";
-	timeString += newDate.getSeconds();
-	return timeString;
-};
-
-
-
 //Files
 
 var getFileList = function(path, callback) {
@@ -135,16 +114,83 @@ var deleteFile = function(path) {
     fs.unlink(path);
 }
 
+
+
 var getImages = function(callback) {
-	getFileList("thumbnails", function(err, paths) {
-		if (err) console.log("Error while getting file list: " + err);
-		else {
-			callback('thumbnails', {
-				paths: paths.map(x => "thumbnails/" + x) 
-			});
+	db.getImageRecords(0, 1000, function(images) {
+		var paths = [];
+		for (var i=0; i < images.length; i++) {
+			paths.push(images[i].name);
 		}
+		callback('thumbnails', {
+			paths: paths.map(path => "thumbnails/" + path), 
+		});
 	});
 };
+
+
+
+//===========================MONGODB============================
+
+// Create a schema
+var gallerySchema = new mongoose.Schema({
+	originalName: String,
+	name: String,
+	hash: String,
+	size: Number,
+	mimetype: String,
+	date: { type: Date, default: Date.now },
+});
+
+function MongoStorage(dbName, schema) {
+	// Connect to MongoDB and create/use database called <dbName>
+	mongoose.connect('mongodb://localhost/' + dbName);
+	// Create a model based on the schema
+	this.model = mongoose.model(dbName, schema);
+	return this;
+};
+
+MongoStorage.prototype.addImageRecord = function(originalName, name, hash, size, mimetype, date, callback) {
+	var model = this.model;
+	model.create(
+		{
+			originalName: originalName,
+			name: name,
+			hash: hash,
+			size: size,
+			mimetype: mimetype,
+			date: date
+		}, 
+		function(err) {
+			if(err) console.log("MongoDB error:", err);
+			callback();
+		}
+	);
+};
+
+MongoStorage.prototype.getImageRecords = function(from, to, callback) {
+	var model = this.model;
+	var nRecords = to - from;
+	model
+		.find({})
+		.skip(from)
+		.limit(nRecords)
+		.exec(function(err, records) {
+			if (err) console.log("MongoDB error:", err);
+			callback(records);
+		});
+};
+
+MongoStorage.prototype.countImageRecords = function(callback) {
+	var model = this.model;
+	model.count({}, function(err, count) {
+        if (err) console.log("MongoDB error:", err);
+		callback(count);
+     });
+};
+
+var db = new MongoStorage("Images", gallerySchema);
+
 
 
 
@@ -177,37 +223,61 @@ app.get('/', simpleAuth, function(req, res) {
 
 app.post('/postphoto', simpleAuth, upload.array('myfile', 1), function (req, res) {
 	
-	// req.files is array of files
+	//req.files is array of files
+	//req.files[i] looks like:
+		/*
+		{
+		fieldname: 'myfile',
+		originalname: '12912531_225240144508422_22998161_n.jpg',
+		encoding: '7bit',
+		mimetype: 'image/jpeg',
+		destination: 'uploads/',
+		filename: '2b0831e79589b8cd722568c9e5259b63',
+		path: 'uploads/2b0831e79589b8cd722568c9e5259b63',
+		size: 54728
+		}
+		*/
+			
 	for (var i = 0; i < req.files.length; i++) {
 		
-		if (!(req.files[i].mimetype.startsWith("image/"))) {
-			console.log(req.files[i].mimetype + " is not image and will be deleted");
-			deleteFile(req.files[i].path);
+		var file = req.files[i];
+		
+		if (!(file.mimetype.startsWith("image/"))) {
+			console.log(file.mimetype + " is not image and will be deleted");
+			deleteFile(file.path);
 			continue;
 		}
 		
-		var extension = req.files[i].originalname.match(/\.\w+$/);
+		var extension = file.originalname.match(/\.\w+$/);
 		
 		if (!extension) {
-			console.log(req.files[i].originalname + " has no extension and will be deleted");
-			deleteFile(req.files[i].path);
+			console.log(file.originalname + " has no extension and will be deleted");
+			deleteFile(file.path);
 		} else {
-			var pathWithExtension = req.files[i].path + extension[0];
-			fs.rename(req.files[i].path, pathWithExtension, function() {
+
+			file.pathWithExtension = file.path + extension[0];
+			fs.rename(file.path, file.pathWithExtension, function() {
+				//Generate thumbnail
 				thumb({
-						source: pathWithExtension, // could be a filename: dest/path/image.jpg 
+						source: file.pathWithExtension, // could be a filename: dest/path/image.jpg 
 						destination: "thumbnails/",
 						suffix: '',
 						width: 350
 					}, function(err) {
-						if (err) console.log("Thumbnail generation error: file " + req.originalname);
+						if (err) console.log("Thumbnail generation error: file " + file.originalname);
+						//Add entry in DB
+						//addImageRecord(originalName, name, hash, size, mimetype, date, callback);
+						var name = file.pathWithExtension.replace(/uploads\//, "");
+						const hash = md5File.sync(file.pathWithExtension);
+						db.addImageRecord(file.originalname, name, hash, file.size, file.mimetype, Date.now(), function() {
+							res.redirect('/');
+						});
 				});
 			});
+			
 		}
 	
 	}
-	
-	res.redirect('/');
 	
 })
 

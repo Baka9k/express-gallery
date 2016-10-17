@@ -29,15 +29,8 @@ $(document).ready(function() {
 	
 });
 
-/*
-$(".bigmodal").on("show.bs.modal", function() {
-	var height = $(window).height() - 20;
-	var width = $(window).width() - 20;
-	var modal = $(this);
-	modal.css("max-height", height).css("width", width);
-	modal.css("margin-top", "20px").css("margin-left", "10px").css("margin-right", "10px");
-});
-*/
+
+
 
 function openModal(id) {
     $("#"+id).modal();
