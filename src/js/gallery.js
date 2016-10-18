@@ -27,6 +27,16 @@ $(document).ready(function() {
 		});
 	});
 	
+	$("#openInNewTabButton").on('click', function (e) {
+		var imageLink = $("#imageViewer").attr("src");
+		var win = window.open(imageLink, '_blank');
+		if (win) {
+			win.focus();
+		} else {
+			alert('Please allow popups for this website');
+		}
+	});
+		
 });
 
 
