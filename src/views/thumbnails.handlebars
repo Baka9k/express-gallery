@@ -81,11 +81,11 @@
 			<div class="vcentered"><img class="img-responsive viewimage centered" id="imageViewer"></img></div>
 			
 			<!-- Left and right controls -->
-			  <a class="left carousel-control" id="leftArrow">
+			  <a class="left carousel-control cursorpointer" id="leftArrow">
 				<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
 				<span class="sr-only">Previous</span>
 			  </a>
-			  <a class="right carousel-control" id="rightArrow">
+			  <a class="right carousel-control cursorpointer" id="rightArrow">
 				<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 				<span class="sr-only">Next</span>
 			  </a>
@@ -106,7 +106,9 @@
 
 
 <div class="container-flud thumbscontainer" id="all-images">
-
+	<div class="row">
+	
+	
 	{{#each paths}}
 
 
@@ -118,8 +120,37 @@
 
 
 	{{/each}}
-
+	
+	
+	</div>
 </div>
+
+
+
+
+<!--FOOTER-->
+
+<div class="footer">
+
+	<!--Pagination-->
+
+	<div class="container-flud centercontent">
+		<div class="pagination cursorpointer">
+			<ul>
+			  <li><a>←</a></li>
+			  <li class="active"><a>1</a></li>
+			  <li><a>2</a></li>
+			  <li><a>3</a></li>
+			  <li><a>→</a></li>
+			</ul>
+		</div>
+	</div>
+
+	<!--/Pagination-->
+	
+</div>
+
+<!--/FOOTER-->
 
 
 

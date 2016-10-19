@@ -6,12 +6,14 @@ var viewer = {
 		if (next.length < 1) return;
 		this.currentImageJQ = next;
 		this.currentImage = $(this.currentImageJQ).attr("src").replace(/thumbnails\//, "/uploads/");
+		this.update();
 	},
 	nextImage: function() {
 		var next = $(this.currentImageJQ).parent().parent().next().find("img");
 		if (next.length < 1) return;
 		this.currentImageJQ = next;
 		this.currentImage = $(this.currentImageJQ).attr("src").replace(/thumbnails\//, "/uploads/");
+		this.update();
 	},
 	update: function() {
 		renderImageInModal(this.currentImage);
@@ -50,11 +52,17 @@ $(document).ready(function() {
 	
 	$("#leftArrow").on('click', function (e) {
 		viewer.prevImage();
-		viewer.update();
 	});
 	$("#rightArrow").on('click', function (e) {
 		viewer.nextImage();
-		viewer.update();
+	});
+	
+	document.addEventListener("keydown", function(event) {
+		if (event.keyCode == 37) {
+			viewer.prevImage();
+		} else if (event.keyCode == 39) {
+			viewer.nextImage();
+		}
 	});
 		
 });
