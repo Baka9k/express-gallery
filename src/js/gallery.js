@@ -20,9 +20,15 @@ var viewer = {
 	},
 };
 
+var initialImagesNumber = 0;
+var lastPage = false;
+
+
 
 $(document).ready(function() {
-
+	
+	initialImagesNumber = $(".square-thumbnail").length;
+	
 	//Add listener on #addImageModalTrigger button which opens form in modal for adding new image
  	$("#addImageModalTrigger").on('click', function (e) {
 		openModal("addImageModal");
@@ -71,28 +77,31 @@ $(document).ready(function() {
 		$("#paginationFirstButton").text(parseInt($("#paginationSecondButton").text()) - 2);
 		$("#paginationThirdButton").text($("#paginationSecondButton").text());
 		$("#paginationSecondButton").text(parseInt($("#paginationSecondButton").text()) - 1);
-		getPage();
+		paginate();
 	});
 	$("#paginationRightArrow").on('click', function (e) {
+		if (lastPage) return;
 		$("#paginationFirstButton").text($("#paginationSecondButton").text());
 		$("#paginationThirdButton").text(parseInt($("#paginationSecondButton").text()) + 2);
 		$("#paginationSecondButton").text(parseInt($("#paginationSecondButton").text()) + 1);
-		getPage();
+		paginate();
 	});
 	$("#paginationFirstButton").on('click', function (e) {
 		if ($("#paginationFirstButton").text() == "0") return;
 		$("#paginationSecondButton").text($("#paginationFirstButton").text());
 		$("#paginationFirstButton").text(parseInt($("#paginationSecondButton").text()) - 1);
 		$("#paginationThirdButton").text(parseInt($("#paginationSecondButton").text()) + 1);
-		getPage();
+		paginate();
 	});
 	$("#paginationThirdButton").on('click', function (e) {
 		$("#paginationSecondButton").text($("#paginationThirdButton").text());
 		$("#paginationFirstButton").text(parseInt($("#paginationSecondButton").text()) - 1);
 		$("#paginationThirdButton").text(parseInt($("#paginationSecondButton").text()) + 1);
-		getPage();
+		paginate();
 	});
 	
+	checkZero();
+	checkLastPage();
 		
 });
 
@@ -114,7 +123,8 @@ function openModal(id) {
 
 function renderImageInModal(imagePath) {
 	$("#imageViewerModal")
-		.find("img").attr("src", imagePath)
+		.find("img").attr("src", "images/loading_icon.gif")
+		.attr("src", imagePath)
 		.css("max-height", $(window).height() - 120)
 		.parent().css("min-height", $(window).height() - 120);
 }
@@ -126,10 +136,40 @@ function getPage() {
 		data: "page=" + parseInt($("#paginationSecondButton").text()),
 		success: function(data)
 		{
-			if (data.length < 1) return;
-			updateThumbnails(jQuery.parseJSON(data));
+			var parsed = jQuery.parseJSON(data);
+			var paths = parsed.paths;
+			var last = parsed.last;
+			if (last) {
+				lastPage = true;
+			} else {
+				lastPage = false;
+			}
+			if (paths < 1) return;
+			updateThumbnails(paths);
+			console.log(last);
 		},
 	});
+}
+
+function checkZero() {
+	if ($("#paginationSecondButton").text() == "1") {
+		$("#paginationFirstButton").css("display", "none");
+	} else {
+		$("#paginationFirstButton").css("display", "inline");
+	}
+}
+
+function checkLastPage() {
+	if (lastPage) {
+		$("#paginationThirdButton").css("display", "none");	
+	} else {
+		$("#paginationThirdButton").css("display", "inline");
+	}
+}
+
+function paginate() {
+	getPage();
+	checkZero();
 }
 
 
@@ -153,6 +193,8 @@ function updateThumbnails(paths) {
 			addPortraitClass();
 		});	
 	});
+	
+	checkLastPage();
 	
 }
 

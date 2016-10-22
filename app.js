@@ -14,18 +14,8 @@ var md5File = require('md5-file');
 
 
 
-var users = [
-    {
-        name: "qwerty",
-        hash: "wvxsat+LoPV1o19I31LAloo9zTxXfCdp3C8QNZQ7l14=",
-        id: "2"
-    },
-    {
-        name: "admin",
-        hash: "K7eZhJaJms3YE3+tOkT6+WqEoD1/IwzkLpfNF8euQp4=",
-        id: "1"
-    }
-];
+var users = JSON.parse(fs.readFileSync('users.json', 'utf8'));
+
 
 users.find = function(field, value) {
     for (var i = 0; i < this.length; i++) {
@@ -301,8 +291,15 @@ app.post('/ajax/getpage', simpleAuth, function (req, res) {
 	var pageNumber = req.body.page - 1;
 	var from = pageNumber * imagesOnPage;
 	var to = from + imagesOnPage;
-	getImagesForAjax(from, to, function(paths) {
-	    res.end(JSON.stringify(paths));
+	var n = to - from;
+	getImagesForAjax(from, to + 1, function(paths) {
+		if (!paths[n]) {
+			var last = true;
+		} else {
+			var last = false;
+			paths.pop();
+		}
+	    res.end(JSON.stringify({paths: paths, last: last}));
 	});
 });
 
