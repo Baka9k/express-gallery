@@ -29,15 +29,13 @@ $(document).ready(function() {
 	});
 	
 	//Add listeners on thumbnails for opening images in modal
-	$(".square-thumbnail").each(function (index, value){
+	$("#all-images").on("click", ".square-thumbnail", function (e) {
 		var thumbLink = $(this).find("img").attr("src");
 		var link = thumbLink.replace(/thumbnails\//, "/uploads/");
-		$(this).on('click', function (e) {
-			openModal("imageViewerModal");
-			renderImageInModal(link);
-			viewer.currentImage = link;
-			viewer.currentImageJQ = $(this).find("img");
-		});
+		openModal("imageViewerModal");
+		renderImageInModal(link);
+		viewer.currentImage = link;
+		viewer.currentImageJQ = $(this).find("img");
 	});
 	
 	$("#openInNewTabButton").on('click', function (e) {
@@ -64,6 +62,37 @@ $(document).ready(function() {
 			viewer.nextImage();
 		}
 	});
+	
+	
+	//Pagination
+	
+	$("#paginationLeftArrow").on('click', function (e) {
+		if ($("#paginationFirstButton").text() == "0") return;
+		$("#paginationFirstButton").text(parseInt($("#paginationSecondButton").text()) - 2);
+		$("#paginationThirdButton").text($("#paginationSecondButton").text());
+		$("#paginationSecondButton").text(parseInt($("#paginationSecondButton").text()) - 1);
+		getPage();
+	});
+	$("#paginationRightArrow").on('click', function (e) {
+		$("#paginationFirstButton").text($("#paginationSecondButton").text());
+		$("#paginationThirdButton").text(parseInt($("#paginationSecondButton").text()) + 2);
+		$("#paginationSecondButton").text(parseInt($("#paginationSecondButton").text()) + 1);
+		getPage();
+	});
+	$("#paginationFirstButton").on('click', function (e) {
+		if ($("#paginationFirstButton").text() == "0") return;
+		$("#paginationSecondButton").text($("#paginationFirstButton").text());
+		$("#paginationFirstButton").text(parseInt($("#paginationSecondButton").text()) - 1);
+		$("#paginationThirdButton").text(parseInt($("#paginationSecondButton").text()) + 1);
+		getPage();
+	});
+	$("#paginationThirdButton").on('click', function (e) {
+		$("#paginationSecondButton").text($("#paginationThirdButton").text());
+		$("#paginationFirstButton").text(parseInt($("#paginationSecondButton").text()) - 1);
+		$("#paginationThirdButton").text(parseInt($("#paginationSecondButton").text()) + 1);
+		getPage();
+	});
+	
 		
 });
 
@@ -72,13 +101,7 @@ $(document).ready(function() {
 
 $(window).load(function() {
 	
-	//Add "portrait" class to vertical images thumbnails
-	$(".thumb").each(function(index) {
-		var img = $(this).find("img");
-		if ( $(img).width() < $(img).height() ) {
-			$(img).addClass("portrait");
-		} 
-	});
+	addPortraitClass();
 	
 });
 
@@ -94,6 +117,59 @@ function renderImageInModal(imagePath) {
 		.find("img").attr("src", imagePath)
 		.css("max-height", $(window).height() - 120)
 		.parent().css("min-height", $(window).height() - 120);
+}
+
+function getPage() {
+	$.ajax({
+		type: "POST",
+		url: "/ajax/getpage",
+		data: "page=" + parseInt($("#paginationSecondButton").text()),
+		success: function(data)
+		{
+			if (data.length < 1) return;
+			updateThumbnails(jQuery.parseJSON(data));
+		},
+	});
+}
+
+
+function updateThumbnails(paths) {
+	
+	var nThumbnails = $("#all-images").find("img").length;
+	
+	//Add or remove thumbnails containers if new page contains more/less images
+	if (nThumbnails > paths.length) {
+		var extra = nThumbnails - paths.length;
+		$("#all-images").find(".thumb").slice(0, extra).remove();
+	} else if (nThumbnails < paths.length) {
+		var needed = paths.length - nThumbnails;
+		$("#all-images").find(".row").append(new Array(needed + 1).join('<div class="col-xs-4 col-sm-3 col-md-2 col-lg-2 thumb"><div class="square-thumbnail"><img class="img"></div></div>'));
+	}
+	
+	$("#all-images").find("img").each(function(index) {
+		$(this).attr("src", "images/loading_icon.gif");
+		$(this).attr("src", "uploads/" + paths[index]);
+		$(this).load(function() {
+			addPortraitClass();
+		});	
+	});
+	
+}
+
+
+function addPortraitClass() {
+
+	//Add "portrait" class to vertical images thumbnails
+	
+	$(".thumb img").removeClass("portrait");
+	
+	$(".thumb").each(function(index) {
+		var img = $(this).find("img");
+		if ( $(img).width() < $(img).height() ) {
+			$(img).addClass("portrait");
+		} 
+	});
+	
 }
 
 

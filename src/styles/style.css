@@ -30,21 +30,21 @@ h2 {
 /* Sticky footer */
 
 html {
-  position: relative;
-  min-height: 100%;
+	position: relative;
+	min-height: 100%;
 }
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 76px;
+	/* Margin bottom by footer height */
+	margin-bottom: 76px;
 }
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  /* Set the fixed height of the footer here */
-  height: 76px;
-  background-color: transparent;
-  padding: 0px;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	/* Set the fixed height of the footer here */
+	height: 76px;
+	background-color: transparent;
+	padding: 0px;
 }
 
 
@@ -402,18 +402,29 @@ body {
 
 .dont-break-out {
 
-  /* These are technically the same, but use both */
-  overflow-wrap: break-word;
-  word-wrap: break-word;
+	/* These are technically the same, but use both */
+	overflow-wrap: break-word;
+	word-wrap: break-word;
 
-  -ms-word-break: break-all;
-  /* Instead use this non-standard one: */
-  word-break: break-word;
+	-ms-word-break: break-all;
+	/* Instead use this non-standard one: */
+	word-break: break-word;
 
-  /* Adds a hyphen where the word breaks, if supported (No Blink) */
-  -ms-hyphens: auto;
-  -moz-hyphens: auto;
-  -webkit-hyphens: auto;
-  hyphens: auto;
+	/* Adds a hyphen where the word breaks, if supported (No Blink) */
+	-ms-hyphens: auto;
+	-moz-hyphens: auto;
+	-webkit-hyphens: auto;
+	hyphens: auto;
 
 }
+
+.selectnone {
+	-webkit-user-select: none;  /* Chrome all / Safari all */
+	-moz-user-select: none;     /* Firefox all */
+	-ms-user-select: none;      /* IE 10+ */
+	user-select: none;          /* Likely future */      
+}
+
+
+
+

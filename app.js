@@ -116,8 +116,8 @@ var deleteFile = function(path) {
 
 
 
-var getImages = function(callback) {
-	db.getImageRecords(0, 1000, function(images) {
+var getImagesForRendering = function(from, to, callback) {
+	db.getImageRecords(from, to, function(images) {
 		var paths = [];
 		for (var i=0; i < images.length; i++) {
 			paths.push(images[i].name);
@@ -125,6 +125,20 @@ var getImages = function(callback) {
 		callback('thumbnails', {
 			paths: paths.map(path => "thumbnails/" + path), 
 		});
+	});
+};
+
+
+const imagesOnPage = 3;
+
+
+var getImagesForAjax = function(from, to, callback) {
+	db.getImageRecords(from, to, function(images) {
+		var paths = [];
+		for (var i=0; i < images.length; i++) {
+			paths.push(images[i].name);
+		}
+		callback(paths);
 	});
 };
 
@@ -215,7 +229,7 @@ app.get('/logout', simpleAuth, function(req, res) {
 
 
 app.get('/', simpleAuth, function(req, res) {
-    getImages(function(template, content) {
+    getImagesForRendering(0, imagesOnPage, function(template, content) {
 	    res.render(template, content);
 	});
 });
@@ -280,6 +294,17 @@ app.post('/postphoto', simpleAuth, upload.array('myfile', 1), function (req, res
 	}
 	
 })
+
+
+app.post('/ajax/getpage', simpleAuth, function (req, res) {
+	//req.body.page must be a page number (page numbers starts with 1)
+	var pageNumber = req.body.page - 1;
+	var from = pageNumber * imagesOnPage;
+	var to = from + imagesOnPage;
+	getImagesForAjax(from, to, function(paths) {
+	    res.end(JSON.stringify(paths));
+	});
+});
 
 
 app.listen(3000, function () {
