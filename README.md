@@ -1,4 +1,4 @@
-# Anonymous chat web-application built with Node.js
+# Gallery web-application built with Node.js
 This is a self-hosted gallery application.
 
 ## How to host it on your server
