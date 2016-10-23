@@ -15,6 +15,7 @@ var md5File = require('md5-file');
 
 
 var users = JSON.parse(fs.readFileSync('users.json', 'utf8'));
+var config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
 
 
 users.find = function(field, value) {
@@ -119,7 +120,7 @@ var getImagesForRendering = function(from, to, callback) {
 };
 
 
-const imagesOnPage = 3;
+const imagesOnPage = config.thumbsOnPage;
 
 
 var getImagesForAjax = function(from, to, callback) {
