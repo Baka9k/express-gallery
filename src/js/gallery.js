@@ -160,6 +160,9 @@ function checkZero() {
 }
 
 function checkLastPage() {
+	if ($("#last").text() == "true") {
+		lastPage = true;
+	}
 	if (lastPage) {
 		$("#paginationThirdButton").css("display", "none");	
 	} else {

@@ -107,20 +107,27 @@ var deleteFile = function(path) {
 
 
 
+const imagesOnPage = parseInt(config.thumbsOnPage);
+
+
 var getImagesForRendering = function(from, to, callback) {
-	db.getImageRecords(from, to, function(images) {
+	db.getImageRecords(from, to + 1, function(images) {
 		var paths = [];
 		for (var i=0; i < images.length; i++) {
 			paths.push(images[i].name);
 		}
+		if (!paths[to]) {
+			var last = "true";
+		} else {
+			var last = "false";
+			paths.pop();
+		}
 		callback('thumbnails', {
-			paths: paths.map(path => "thumbnails/" + path), 
+			paths: paths.map(path => "thumbnails/" + path),
+			last: last,
 		});
 	});
 };
-
-
-const imagesOnPage = config.thumbsOnPage;
 
 
 var getImagesForAjax = function(from, to, callback) {
